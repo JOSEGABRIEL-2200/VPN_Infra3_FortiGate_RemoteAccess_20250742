@@ -285,7 +285,7 @@ end
 |---|---|---|
 | 1 | DHCP en la VLAN 10 (`show ip dhcp binding` en R-USUARIOS) | ✅ PC host `10.7.42.10` y VM Windows 10 `10.7.42.11` |
 | 2 | `tracert 200.7.42.6` **sin VPN** | ✅ `10.7.42.1` → `200.7.42.1` → `200.7.42.6` |
-| 3 | `https://200.7.42.6` **sin VPN** | ✅ Abre la página del servidor por el VIP `VIP_WEB_HTTPS` |
+| 3 | `https://200.7.42.6` **sin VPN** (PC host y VM Windows 10) | ✅ Abre la página del servidor por el VIP `VIP_WEB_HTTPS` |
 | 4 | `ssh jose@200.7.42.6` y `ssh jose@10.7.42.130` **sin VPN** | ✅ Ambos fallan: *Connection timed out* |
 | 5 | FortiClient → Connect (VM Windows 10) | ✅ *VPN Connected*, IP `10.7.42.162`, usuario `jgabriel` |
 | 6 | Estado en el FortiGate (VPN → IPsec Tunnels / widget IPsec) | ✅ `VPN_REMOTO`: **1 dialup connection**; `VPN_REMOTO_0` con Fase 1 y Fase 2 arriba desde `200.7.42.2` |
@@ -296,7 +296,11 @@ end
 
 **Sin VPN — HTTPS funciona por el VIP:**
 
-![HTTPS sin VPN](screenshots/08_pc_https_sin_vpn_vip.png)
+![HTTPS sin VPN (PC host)](screenshots/08_pc_https_sin_vpn_vip.png)
+
+![HTTPS por el VIP (VM Windows 10)](screenshots/08b_win10_https_vip.png)
+
+> La dirección se escribe completa con `https://`. Si se escribe solo `200.7.42.6`, el navegador intenta por HTTP (puerto 80), que el FortiGate no publica, y la conexión da *timeout*. Por el split tunnel, el tráfico hacia `200.7.42.6` nunca entra al túnel: la web se alcanza igual con FortiClient conectado o desconectado.
 
 **Sin VPN — traceroute llega a la IP pública, pero el SSH no:** el SSH a `200.7.42.6` falla porque el VIP solo publica el 443 y el `port2` no permite administración por SSH; el SSH a `10.7.42.130` falla porque esa red privada no existe para el ISP (solo se alcanza por la VPN).
 
@@ -372,7 +376,8 @@ Al agregar una VM como cliente en la nube Cloud4, el switch no dejaba pasar su t
 | 06b | [`06b_fgt_vip_web_https.png`](screenshots/06b_fgt_vip_web_https.png) | Virtual IP `VIP_WEB_HTTPS` (443 → 443) |
 | 07 | [`07_fgt_cli_phase1_phase2.png`](screenshots/07_fgt_cli_phase1_phase2.png) | Fase 1 y Fase 2 de `VPN_REMOTO` (PSK redactada) |
 | 07b | [`07b_fgt_grupo_vpn.png`](screenshots/07b_fgt_grupo_vpn.png) | Grupo `GRUPO_VPN` con el usuario `jgabriel` |
-| 08 | [`08_pc_https_sin_vpn_vip.png`](screenshots/08_pc_https_sin_vpn_vip.png) | HTTPS **sin VPN** por el VIP |
+| 08 | [`08_pc_https_sin_vpn_vip.png`](screenshots/08_pc_https_sin_vpn_vip.png) | HTTPS **sin VPN** por el VIP (PC host) |
+| 08b | [`08b_win10_https_vip.png`](screenshots/08b_win10_https_vip.png) | HTTPS por el VIP desde la VM Windows 10 |
 | 09 | [`09_pc_tracert_ssh_sin_vpn.png`](screenshots/09_pc_tracert_ssh_sin_vpn.png) | Traceroute y SSH **sin VPN** (PC host) |
 | 10 | [`10_win10_tracert_ssh_sin_vpn.png`](screenshots/10_win10_tracert_ssh_sin_vpn.png) | Traceroute y SSH **sin VPN** (VM Windows 10) |
 | 11 | [`11_host_win11_forticlient_0kb.png`](screenshots/11_host_win11_forticlient_0kb.png) | Problema 11.2: FortiClient en el host con 0 KB recibidos |
