@@ -1,0 +1,51 @@
+! =====================================================================
+! SW-A - Switch Cisco IOL L2 - Infraestructura 3 (sitio Usuarios)
+! Jose Gabriel Feliz Maria - 2025-0742
+! VLAN 10: e0/0 hacia R-USUARIOS e0/1 y e0/1 hacia PC-USUARIO (Cloud4).
+! Port-security maximo 3 MAC en e0/1: VM Windows 10, adaptador VMnet8 del
+! PC host y la interfaz eth4 de la VM de PNETLab (todas llegan por Cloud4).
+! Puertos sin uso en la VLAN 999 y apagados. Claves de laboratorio.
+! =====================================================================
+enable
+configure terminal
+hostname SW-A
+no ip domain-lookup
+vlan 10
+ name USUARIOS
+vlan 999
+ name SIN-USO
+exit
+interface Ethernet0/0
+ description VLAN10-R-USUARIOS-e0/1
+ switchport mode access
+ switchport access vlan 10
+ spanning-tree portfast edge
+ no shutdown
+interface Ethernet0/1
+ description PC-USUARIO
+ switchport mode access
+ switchport access vlan 10
+ switchport port-security
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+ no shutdown
+interface range Ethernet0/2 - 3
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+service password-encryption
+enable secret cisco123
+banner motd #SW-A - Acceso restringido. Infra 3 - 2025-0742#
+line console 0
+ password cisco
+ login
+ logging synchronous
+line vty 0 4
+ password cisco
+ login
+end
+write memory

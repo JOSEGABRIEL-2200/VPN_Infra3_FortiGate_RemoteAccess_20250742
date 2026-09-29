@@ -1,0 +1,48 @@
+! =====================================================================
+! ISP - Router Cisco IOL L3 - Infraestructura 3 (VPN de Acceso Remoto)
+! Jose Gabriel Feliz Maria - 2025-0742
+! Entrega IPs publicas a R-USUARIOS y FGT-SERVIDOR y les da salida a
+! Internet con NAT (PAT) por Ethernet0/2. No conoce las redes 10.7.42.x.
+! Claves de laboratorio (cambiarlas en un entorno real).
+! =====================================================================
+enable
+configure terminal
+hostname ISP
+no ip domain-lookup
+interface Ethernet0/0
+ description R-USUARIOS-e0/0 (IP publica sitio Usuarios)
+ ip address 200.7.42.1 255.255.255.252
+ ip nat inside
+ no shutdown
+interface Ethernet0/1
+ description FGT-SERVIDOR-port2 (IP publica sitio Servidor)
+ ip address 200.7.42.5 255.255.255.252
+ ip nat inside
+ no shutdown
+interface Ethernet0/2
+ description INTERNET (Cloud0 - NAT de VMware)
+ ip address dhcp
+ ip nat outside
+ no shutdown
+interface Ethernet0/3
+ description SIN-USO
+ shutdown
+exit
+access-list 1 permit 200.7.42.0 0.0.0.7
+ip nat inside source list 1 interface Ethernet0/2 overload
+service password-encryption
+enable secret cisco123
+banner motd #ISP - Acceso restringido. Infra 3 - 2025-0742#
+ip domain-name itla.lab
+username admin privilege 15 secret cisco123
+crypto key generate rsa general-keys modulus 2048
+ip ssh version 2
+line console 0
+ password cisco
+ login
+ logging synchronous
+line vty 0 4
+ login local
+ transport input ssh
+end
+write memory
