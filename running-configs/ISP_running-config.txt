@@ -1,0 +1,71 @@
+! Running-config del ISP - Infraestructura 3 - Jose Gabriel Feliz Maria 2025-0742
+! Nota: configuracion en ejecucion del ISP en formato IOS, armada a partir de los
+! comandos aplicados (scripts/ISP_config.txt) y de lo verificado en el laboratorio.
+! Las contrasenas aparecen como <cifrada> porque IOS las guarda cifradas
+! (service password-encryption / enable secret).
+!
+version 15.7
+service config
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname ISP
+!
+enable secret 5 <cifrada>
+!
+no aaa new-model
+!
+no ip domain lookup
+ip domain name itla.lab
+ip cef
+no ipv6 cef
+!
+username admin privilege 15 secret 5 <cifrada>
+!
+interface Ethernet0/0
+ description R-USUARIOS-e0/0 (IP publica sitio Usuarios)
+ ip address 200.7.42.1 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ duplex auto
+!
+interface Ethernet0/1
+ description FGT-SERVIDOR-port2 (IP publica sitio Servidor)
+ ip address 200.7.42.5 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ duplex auto
+!
+interface Ethernet0/2
+ description INTERNET (Cloud0 - NAT de VMware)
+ ip address dhcp
+ ip nat outside
+ ip virtual-reassembly in
+ duplex auto
+!
+interface Ethernet0/3
+ description SIN-USO
+ no ip address
+ shutdown
+ duplex auto
+!
+ip forward-protocol nd
+!
+ip nat inside source list 1 interface Ethernet0/2 overload
+ip ssh version 2
+!
+access-list 1 permit 200.7.42.0 0.0.0.7
+!
+banner motd ^CISP - Acceso restringido. Infra 3 - 2025-0742^C
+!
+line con 0
+ password 7 <cifrada>
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ login local
+ transport input ssh
+!
+end

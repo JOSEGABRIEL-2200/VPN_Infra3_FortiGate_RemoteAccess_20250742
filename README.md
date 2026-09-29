@@ -359,6 +359,8 @@ Al agregar una VM como cliente en la nube Cloud4, el switch no dejaba pasar su t
 | [`running-configs/FGT-SERVIDOR_running-config.conf`](running-configs/FGT-SERVIDOR_running-config.conf) | Backup de configuración del FortiGate (GUI → Configuration → Backup) |
 | [`diagramas/gen_diagrama.py`](diagramas/gen_diagrama.py) | Script (Python + matplotlib) que genera el diagrama de la topología |
 
+> Las running-configs de los equipos Cisco (ISP, R-USUARIOS y SW-A) están en formato IOS y se armaron a partir de los comandos aplicados (`scripts/`) y de lo verificado en el laboratorio (DHCP, VLAN 10 y port-security con 3 MAC sticky); cada archivo lo indica al inicio. Las VLAN del SW-A no aparecen en la running-config porque IOS las guarda en `vlan.dat` (se ven en la captura de `show vlan brief`).
+
 > En las configuraciones y capturas publicadas se redactaron (`<REDACTADO>`) la clave precompartida de la VPN, los hashes de contraseñas del FortiGate y las llaves privadas de los certificados, porque el repositorio es público. Las contraseñas de los equipos Cisco son de laboratorio.
 
 ---

@@ -1,0 +1,71 @@
+! Running-config del SW-A - Infraestructura 3 - Jose Gabriel Feliz Maria 2025-0742
+! Nota: configuracion en ejecucion del SW-A en formato IOS, armada a partir de los
+! comandos aplicados (scripts/SW-A_config.txt) y de lo verificado en el laboratorio
+! (show vlan brief y show port-security interface Ethernet0/1: maximo 3, 3 MAC sticky).
+! MAC sticky: 000c.292b.94c3 = VM Windows 10, 0050.56c0.0008 = VMnet8 del PC host,
+! 000c.29ce.0272 = interfaz de la VM de PNETLab (Cloud4).
+! Las contrasenas aparecen como <cifrada> porque IOS las guarda cifradas.
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+service compress-config
+!
+hostname SW-A
+!
+enable secret 5 <cifrada>
+!
+no aaa new-model
+!
+no ip domain-lookup
+ip cef
+no ipv6 cef
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+interface Ethernet0/0
+ description VLAN10-R-USUARIOS-e0/1
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast edge
+!
+interface Ethernet0/1
+ description PC-USUARIO
+ switchport access vlan 10
+ switchport mode access
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+ switchport port-security mac-address sticky 000c.292b.94c3
+ switchport port-security mac-address sticky 000c.29ce.0272
+ switchport port-security mac-address sticky 0050.56c0.0008
+ switchport port-security
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+!
+interface Ethernet0/2
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface Ethernet0/3
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+ip forward-protocol nd
+!
+banner motd ^CSW-A - Acceso restringido. Infra 3 - 2025-0742^C
+!
+line con 0
+ password 7 <cifrada>
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 <cifrada>
+ login
+!
+end
