@@ -7,7 +7,9 @@
 
 ## 🎥 Video Demostrativo
 
-**[Ver demostración en YouTube](PEGAR_AQUI_EL_LINK_DEL_VIDEO)** ⚠️ *(pendiente de grabar/subir)*
+[![Ver el video en YouTube](https://img.youtube.com/vi/TZ6KuEyEx2Q/hqdefault.jpg)](https://youtu.be/TZ6KuEyEx2Q)
+
+**▶️ [Ver demostración en YouTube](https://youtu.be/TZ6KuEyEx2Q)**
 
 En el video se muestra la hora y fecha del sistema, el rostro y la voz del autor, y la demostración de que **el Usuario entra a la página web del Servidor por HTTPS sin VPN, pero solo puede entrar por SSH al Servidor cuando está conectado a la VPN de acceso remoto (FortiClient)**.
 
